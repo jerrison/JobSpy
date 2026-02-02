@@ -242,7 +242,7 @@ class JobPost(BaseModel):
     company_name: str | None
     job_url: str
     job_url_direct: str | None = None
-    location: Optional[Location]
+    location: Optional[Location] = None
 
     description: str | None = None
     company_url: str | None = None

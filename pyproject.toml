@@ -1,33 +1,41 @@
-[build-system]
-requires = [ "poetry-core",]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "python-jobspy"
 version = "1.1.82"
 description = "Job scraper for LinkedIn, Indeed, Glassdoor, ZipRecruiter & Bayt"
-authors = ["Cullen Watson <cullen@cullenwatson.com>", "Zachary Hampton <zachary@zacharysproducts.com>"]
-homepage = "https://github.com/cullenwatson/JobSpy"
+authors = [
+    {name = "Cullen Watson", email = "cullen@cullenwatson.com"},
+    {name = "Zachary Hampton", email = "zachary@zacharysproducts.com"},
+]
 readme = "README.md"
-keywords = [ "jobs-scraper", "linkedin", "indeed", "glassdoor", "ziprecruiter", "bayt", "naukri"]
-[[tool.poetry.packages]]
-include = "jobspy"
+keywords = ["jobs-scraper", "linkedin", "indeed", "glassdoor", "ziprecruiter", "bayt", "naukri"]
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.32.5",
+    "beautifulsoup4>=4.14.3",
+    "pandas>=3.0.0",
+    "numpy>=2.4.0",
+    "pydantic>=2.12.5",
+    "tls-client>=1.0.1",
+    "markdownify>=1.2.2",
+    "regex>=2026.1.15",
+]
+
+[project.urls]
+Homepage = "https://github.com/cullenwatson/JobSpy"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "black>=26.1.0",
+    "pre-commit>=4.5.1",
+]
 
 [tool.black]
 line-length = 88
 
-[tool.poetry.dependencies]
-python = "^3.10"
-requests = "^2.31.0"
-beautifulsoup4 = "^4.12.2"
-pandas = "^2.1.0"
-numpy = ">=1.26.0"
-pydantic = "^2.3.0"
-tls-client = "^1.0.1"
-markdownify = "^1.1.0"
-regex = "^2024.4.28"
-
-[tool.poetry.group.dev.dependencies]
-jupyter = "^1.0.0"
-black = "*"
-pre-commit = "*"
+[tool.hatch.build.targets.wheel]
+packages = ["jobspy"]
