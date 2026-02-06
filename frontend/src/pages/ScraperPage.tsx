@@ -3,6 +3,7 @@ import JobForm from "../components/JobForm";
 import JobTable from "../components/JobTable";
 import JobDetail from "../components/JobDetail";
 import Pagination from "../components/Pagination";
+import ProxyList, { PROXIES_STORAGE_KEY, saveProxies } from "../components/ProxyList";
 import { startScrape, getScrapeStatus, listJobs } from "../api/client";
 import type { Job, ScrapeRequest, ScrapeStatus } from "../types/job";
 
@@ -15,6 +16,14 @@ export default function ScraperPage() {
   const [pages, setPages] = useState(1);
   const [selected, setSelected] = useState<Job | null>(null);
   const sessionRef = useRef<string | null>(null);
+  const [proxies, setProxies] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem(PROXIES_STORAGE_KEY) || "[]"); } catch { return []; }
+  });
+
+  function handleProxiesChange(next: string[]) {
+    setProxies(next);
+    saveProxies(next);
+  }
 
   async function handleSubmit(req: ScrapeRequest) {
     setLoading(true);
@@ -60,7 +69,10 @@ export default function ScraperPage() {
   return (
     <div>
       <h1 style={{ fontSize: 22, marginBottom: "1rem" }}>Job Scraper</h1>
-      <JobForm onSubmit={handleSubmit} loading={loading} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "1rem", alignItems: "start" }}>
+        <JobForm onSubmit={handleSubmit} loading={loading} proxies={proxies} />
+        <ProxyList proxies={proxies} onChange={handleProxiesChange} />
+      </div>
 
       {status && (
         <div style={{ margin: "1rem 0", padding: "0.75rem 1rem", borderRadius: 4, background: status.status === "failed" ? "#fff0f0" : status.status === "running" ? "#fffbe6" : "#f0fff0", border: "1px solid #e0e0e0" }}>

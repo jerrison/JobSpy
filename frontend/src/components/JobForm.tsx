@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ScrapeRequest } from "../types/job";
 
-const SITES = ["linkedin", "indeed", "zip_recruiter", "glassdoor", "google", "bayt", "naukri", "bdjobs"];
+const SITES = ["linkedin", "indeed", "zip_recruiter", "glassdoor", "google", "bayt", "naukri", "bdjobs", "wellfound"];
 const JOB_TYPES: Array<{ value: string; label: string }> = [
   { value: "", label: "Any job type" },
   { value: "fulltime", label: "Full Time" },
@@ -17,9 +17,10 @@ const btn: React.CSSProperties = { padding: "10px 24px", background: "#0066cc", 
 interface Props {
   onSubmit: (req: ScrapeRequest) => void;
   loading: boolean;
+  proxies: string[];
 }
 
-export default function JobForm({ onSubmit, loading }: Props) {
+export default function JobForm({ onSubmit, loading, proxies }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [selectedSites, setSelectedSites] = useState<string[]>([...SITES]);
@@ -33,7 +34,6 @@ export default function JobForm({ onSubmit, loading }: Props) {
   const [enforceSalary, setEnforceSalary] = useState(false);
   const [descFmt, setDescFmt] = useState("markdown");
   const [linkedinFetch, setLinkedinFetch] = useState(false);
-  const [proxiesText, setProxiesText] = useState("");
 
   function toggleSite(s: string) {
     setSelectedSites((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
@@ -58,7 +58,7 @@ export default function JobForm({ onSubmit, loading }: Props) {
       enforce_annual_salary: enforceSalary,
       description_format: descFmt,
       linkedin_fetch_description: linkedinFetch,
-      proxies: proxiesText.trim() ? proxiesText.trim().split("\n").map((s) => s.trim()).filter(Boolean) : undefined,
+      proxies: proxies.length ? proxies : undefined,
     };
     onSubmit(req);
   }
@@ -138,15 +138,11 @@ export default function JobForm({ onSubmit, loading }: Props) {
           <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <input type="checkbox" checked={linkedinFetch} onChange={(e) => setLinkedinFetch(e.target.checked)} /> Fetch LinkedIn descriptions
           </label>
-          <div style={{ ...formGroup, gridColumn: "1 / -1" }}>
-            <label>Proxies <span style={{ fontWeight: 400, color: "#888" }}>(one per line, e.g. http://user:pass@host:port)</span></label>
-            <textarea style={{ ...input, minHeight: 60, fontFamily: "monospace", fontSize: 13 }} value={proxiesText} onChange={(e) => setProxiesText(e.target.value)} placeholder={"http://1.2.3.4:8080\nhttp://5.6.7.8:3128\nsocks5://9.10.11.12:1080"} />
-          </div>
         </div>
       )}
 
       <button type="submit" style={{ ...btn, opacity: loading ? 0.6 : 1 }} disabled={loading}>
-        {loading ? "Scraping..." : "Start Scrape"}
+        {loading ? "Scraping..." : `Start Scrape${proxies.length ? ` (${proxies.length} proxies)` : ""}`}
       </button>
     </form>
   );
