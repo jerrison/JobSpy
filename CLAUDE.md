@@ -34,14 +34,23 @@ data/
 ## How to Run
 
 ```bash
+./dev.sh          # first run installs deps; subsequent runs skip
+./dev.sh --fresh  # force reinstall all deps
+```
+
+Open http://localhost:5173. Vite proxies `/api` to `localhost:8000`. Ctrl+C stops both servers.
+
+<details>
+<summary>Manual two-terminal startup (fallback)</summary>
+
+```bash
 # Backend (Terminal 1) — from backend/
 cd backend && uv sync && uv pip install -e .. && uv run uvicorn app.main:app --reload --port 8000
 
 # Frontend (Terminal 2) — from frontend/
 cd frontend && npm install && npm run dev
 ```
-
-Open http://localhost:5173. Vite proxies `/api` to `localhost:8000`.
+</details>
 
 ## Key Setup Gotchas
 
